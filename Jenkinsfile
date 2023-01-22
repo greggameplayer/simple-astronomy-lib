@@ -25,6 +25,13 @@ pipeline {
                 '''
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('main') {
+                    sh "mvn verify sonar:sonar"
+                }
+            }
+        }
     }
 
     post {

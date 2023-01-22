@@ -21,6 +21,11 @@
             <version>1.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.9.1.2184</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -81,5 +86,23 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Optional URL to server. Default value is http://localhost:9000 -->
+                <sonar.host.url>
+                    https://sonarqube.gregsvc.fr
+                </sonar.host.url>
+                <sonar.projectKey>
+                    greggameplayer_simple-astronomy-lib
+                </sonar.projectKey>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
