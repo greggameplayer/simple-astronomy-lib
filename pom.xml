@@ -99,7 +99,7 @@
                     https://sonarqube.gregsvc.fr
                 </sonar.host.url>
                 <sonar.projectKey>
-                    greggameplayer_simple-astronomy-lib
+                    greggameplayer_simple-astronomy-lib_AYXgVytXx7ulBE-KtBH3
                 </sonar.projectKey>
             </properties>
         </profile>

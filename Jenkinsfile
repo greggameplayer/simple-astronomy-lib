@@ -28,7 +28,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('main-sonar') {
-                    sh "mvn verify sonar:sonar -Dsonar.projectKey=greggameplayer_simple-astronomy-lib"
+                    sh "mvn verify sonar:sonar"
                 }
             }
         }
