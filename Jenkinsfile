@@ -1,7 +1,7 @@
 pipeline {
     agent {
         kubernetes {
-            containers {
+            containerTemplates {
                 containerTemplate {
                     name 'maven'
                     image 'maven:3.8.4-openjdk-17-slim'
