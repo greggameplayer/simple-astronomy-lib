@@ -1,12 +1,10 @@
 pipeline {
     agent {
         kubernetes {
+            defaultContainer 'maven'
             yaml '''
             apiVersion: v1
             kind: Pod
-            metadata:
-            labels:
-                some-label: some-label-value
             spec:
             containers:
             - name: maven
@@ -22,7 +20,6 @@ pipeline {
               tty: true
               privileged: true
             '''
-            defaultContainer 'maven'
         }
     }
 
