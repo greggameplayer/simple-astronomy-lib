@@ -7,6 +7,14 @@ pipeline {
                 command 'sleep'
                 args '99d'
             }
+            containerTemplate {
+                name: 'docker'
+                image: 'docker:dind'
+                ttyEnabled: true
+                command: 'cat'
+                privileged: true
+            }
+
             defaultContainer 'maven'
         }
     }
@@ -41,9 +49,16 @@ pipeline {
         }
         stage('Docker build & push') {
             steps {
-                script {
-                    docker.withRegistry('https://$DOCKER_REGISTRY', 'docker-registry') {
-                        docker.build('simple-astronomy').push('0.3.0')
+                container('docker') {
+                    script {
+                        docker.withRegistry('https://$DOCKER_REGISTRY', 'docker-registry') {
+                            sh '''
+                            docker buildx create --name mybuilder
+                            docker buildx use mybuilder
+                            docker buildx inspect --bootstrap
+                            docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_REGISTRY/simple-astronomy:0.3.0 --push .
+                            '''
+                        }
                     }
                 }
             }
@@ -54,7 +69,7 @@ pipeline {
         success {
             junit '**/target/surefire-reports/TEST-*.xml'
             archiveArtifacts 'target/*.jar'
-            step( [ $class: 'JacocoPublisher' ] )
+            step([$class: 'JacocoPublisher'])
         }
         cleanup {
             cleanWs deleteDirs: true
