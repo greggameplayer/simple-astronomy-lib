@@ -10,6 +10,13 @@ pipeline {
             defaultContainer 'maven'
         }
     }
+
+    environment {
+        DOCKER_REGISTRY = credentials('DOCKER_REGISTRY')
+        DOCKER_USER = credentials('DOCKER_USER')
+        DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
+    }
+
     stages {
         stage('build') {
             steps {
@@ -32,11 +39,26 @@ pipeline {
                 }
             }
         }
+        stage('Install docker') {
+            steps {
+                sh '''
+                apt-get update
+                apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
+                mkdir -p /etc/apt/keyrings
+                curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+                echo \
+                "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \\
+                $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+                apt-get update
+                apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+                '''
+            }
+        }
         stage('Docker build & push') {
             steps {
                 sh '''
                 docker login $DOCKER_REGISTRY -u $DOCKER_USER -p $DOCKER_PASSWORD
-                docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_REGISTRY/$DOCKER_IMAGE:0.3.0 --push .
+                docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_REGISTRY/simple-astronomy:0.3.0 --push .
                 '''
             }
         }
