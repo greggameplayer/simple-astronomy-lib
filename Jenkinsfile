@@ -16,7 +16,9 @@ pipeline {
               - name: docker
                 image: docker:dind
                 command:
-                  - cat
+                  - dockerd-entrypoint.sh
+                args:
+                  - dockerd
                 tty: true
                 privileged: true
             '''
