@@ -1,20 +1,21 @@
 pipeline {
     agent {
         kubernetes {
-            containerTemplate {
-                name 'maven'
-                image 'maven:3.8.4-openjdk-17-slim'
-                command 'sleep'
-                args '99d'
+            containers {
+                containerTemplate {
+                    name 'maven'
+                    image 'maven:3.8.4-openjdk-17-slim'
+                    command 'sleep'
+                    args '99d'
+                }
+                containerTemplate {
+                    name: 'docker'
+                    image: 'docker:dind'
+                    ttyEnabled: true
+                    command: 'cat'
+                    privileged: true
+                }
             }
-            containerTemplate {
-                name: 'docker'
-                image: 'docker:dind'
-                ttyEnabled: true
-                command: 'cat'
-                privileged: true
-            }
-
             defaultContainer 'maven'
         }
     }
