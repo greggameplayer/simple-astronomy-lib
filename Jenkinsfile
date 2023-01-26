@@ -6,19 +6,19 @@ pipeline {
             apiVersion: v1
             kind: Pod
             spec:
-            containers:
-            - name: maven
-              image: maven:3.8.4-openjdk-17-slim
-              command:
-                - sleep
-              args:
-                - 99d
-            - name: docker
-              image: docker:dind
-              command:
-                - cat
-              tty: true
-              privileged: true
+              containers:
+              - name: maven
+                image: maven:3.8.4-openjdk-17-slim
+                command:
+                  - sleep
+                args:
+                  - 99d
+              - name: docker
+                image: docker:dind
+                command:
+                  - cat
+                tty: true
+                privileged: true
             '''
         }
     }
