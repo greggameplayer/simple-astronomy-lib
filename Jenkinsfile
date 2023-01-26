@@ -16,9 +16,9 @@ pipeline {
               - name: docker
                 image: docker:dind
                 command:
-                  - sleep
+                  - /usr/local/bin/dockerd-entrypoint.sh
                 args:
-                  - 99d
+                  - dockerd
                 tty: true
                 securityContext: 
                   privileged: true
