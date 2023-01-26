@@ -6,7 +6,7 @@ RUN set -eux; \
     addgroup --system --gid 1000 astronomy; \
     adduser --system --home ${HOME} -u 1000 --gid 1000 astronomy; \
     mkdir -p ${HOME}; \
-    chown -R astronomy:astronomy ${HOME} \
+    chown -R astronomy:astronomy ${HOME}; \
     cd ${HOME};
 
 COPY --chown=astronomy:astronomy ./target/SimpleAstronomyLib-*.jar ${HOME}/bin/
