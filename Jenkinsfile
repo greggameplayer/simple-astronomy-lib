@@ -56,12 +56,7 @@ pipeline {
                 container('docker') {
                     script {
                         docker.withRegistry('https://$DOCKER_REGISTRY', 'docker-registry') {
-                            sh '''
-                            docker buildx create --name mybuilder
-                            docker buildx use mybuilder
-                            docker buildx inspect --bootstrap
-                            docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_REGISTRY/simple-astronomy:0.3.0 --push .
-                            '''
+                            docker.build("simple-astronomy").push("0.3.0")
                         }
                     }
                 }
