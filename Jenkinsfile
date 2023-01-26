@@ -32,6 +32,14 @@ pipeline {
                 }
             }
         }
+        stage('Docker build & push') {
+            steps {
+                sh '''
+                docker login $DOCKER_REGISTRY -u $DOCKER_USER -p $DOCKER_PASSWORD
+                docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_REGISTRY/$DOCKER_IMAGE:0.3.0 --push .
+                '''
+            }
+        }
     }
 
     post {
