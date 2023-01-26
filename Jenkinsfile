@@ -20,7 +20,8 @@ pipeline {
                 args:
                   - 99d
                 tty: true
-                privileged: true
+                securityContext: 
+                  privileged: true
             '''
         }
     }
