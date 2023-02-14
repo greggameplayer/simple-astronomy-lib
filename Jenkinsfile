@@ -30,6 +30,11 @@ pipeline {
         DOCKER_REGISTRY = credentials('DOCKER_REGISTRY')
         DOCKER_USER = credentials('DOCKER_USER')
         DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
+        NEXUS_VERSION = "nexus3"
+        NEXUS_PROTOCOL = "https"
+        NEXUS_URL = "nexus.gregsvc.fr"
+        NEXUS_REPOSITORY = "maven-releases"
+        NEXUS_CREDENTIAL_ID = "nexus-creds"
     }
 
     stages {
@@ -56,7 +61,37 @@ pipeline {
         }
         stage('Nexus push') {
             steps {
-                nexusPublisher nexusInstanceId: 'main', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/*']], mavenCoordinate: [artifactId: '${POM_ARTIFACTID}', groupId: '${POM_GROUPID}', packaging: '${POM_PACKAGING}', version: '${POM_VERSION}']]]
+                script {
+                    pom = readMavenPom file: "pom.xml";
+                    filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
+                    echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
+                    artifactPath = filesByGlob[0].path;
+                    artifactExists = fileExists artifactPath;
+                    if(artifactExists) {
+                        echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
+                        nexusArtifactUploader(
+                                nexusVersion: NEXUS_VERSION,
+                                protocol: NEXUS_PROTOCOL,
+                                nexusUrl: NEXUS_URL,
+                                groupId: pom.groupId,
+                                version: pom.version,
+                                repository: NEXUS_REPOSITORY,
+                                credentialsId: NEXUS_CREDENTIAL_ID,
+                                artifacts: [
+                                        [artifactId: pom.artifactId,
+                                         classifier: '',
+                                         file: artifactPath,
+                                         type: pom.packaging],
+                                        [artifactId: pom.artifactId,
+                                         classifier: '',
+                                         file: "pom.xml",
+                                         type: "pom"]
+                                ]
+                        );
+                    } else {
+                        error "*** File: ${artifactPath}, could not be found";
+                    }
+                }
             }
         }
         stage('Docker build & push') {
