@@ -58,6 +58,7 @@ pipeline {
             steps {
                 nexusPublisher nexusInstanceId: 'main', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/${POM_ARTIFACTID}-${POM_VERSION}.${POM_PACKAGING}']], mavenCoordinate: [artifactId: '${POM_ARTIFACTID}', groupId: '${POM_GROUPID}', packaging: '${POM_PACKAGING}', version: '${POM_VERSION}']]]
             }
+        }
         stage('Docker build & push') {
             steps {
                 container('docker') {
