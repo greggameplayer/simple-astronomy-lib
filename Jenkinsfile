@@ -52,6 +52,13 @@ pipeline {
                 '''
             }
         }
+        stage('static tests analysis') {
+            steps {
+                sh '''
+                mvn checkstyle:checkstyle spotbugs:check
+                '''
+            }
+        }
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('main-sonar') {
@@ -117,6 +124,9 @@ pipeline {
             junit '**/target/surefire-reports/TEST-*.xml'
             archiveArtifacts 'target/*.jar'
             step([$class: 'JacocoPublisher'])
+            recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+            recordIssues enabledForFailure: true, tools: checkStyle()
+            recordIssues enabledForFailure: true, tools: spotBugs()
         }
         cleanup {
             cleanWs deleteDirs: true
