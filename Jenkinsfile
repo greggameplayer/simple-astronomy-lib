@@ -125,8 +125,7 @@ pipeline {
             archiveArtifacts 'target/*.jar'
             step([$class: 'JacocoPublisher'])
             recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
-            recordIssues enabledForFailure: true, tools: checkStyle()
-            recordIssues enabledForFailure: true, tools: spotBugs()
+            recordIssues enabledForFailure: true, tools: [checkStyle(), spotBugs()]
         }
         cleanup {
             cleanWs deleteDirs: true
