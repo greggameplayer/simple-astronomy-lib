@@ -36,6 +36,7 @@
             <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
 				<executions>
 				<execution>
 					<id>attach-sources</id>
@@ -48,6 +49,7 @@
 		    <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
                 <configuration>
                     <source>8</source>
                 </configuration>
@@ -60,7 +62,62 @@
 					</execution>
 				</executions>
             </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.9.1.2184</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.7</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <configLocation>sun_checks.xml</configLocation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.7.2.1</version>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Optional URL to server. Default value is http://localhost:9000 -->
+                <sonar.host.url>
+                    https://sonarqube.gregsvc.fr
+                </sonar.host.url>
+                <sonar.projectKey>
+                    greggameplayer_simple-astronomy-lib_AYXgVytXx7ulBE-KtBH3
+                </sonar.projectKey>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
